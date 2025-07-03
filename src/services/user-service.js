@@ -10,12 +10,18 @@ const userSignup = async (data) => {
            const createdUser = await userRepo.create(data)
            return createdUser
       } catch (error) {
+        console.log(error)
 
         if (error.name === "SequelizeValidationError") {
           throw new AppError(error.message, StatusCodes.BAD_REQUEST);
         }
 
-        throw new AppError("There was an error during Sign up!", 
+        if(error.name = 'SequelizeUniqueConstraintError') {
+          throw new AppError('Email already exists. Please try with different email.', 
+            StatusCodes.BAD_REQUEST);
+        }
+
+        throw new AppError("An error occured during Sign up! Please retry.", 
             StatusCodes.INTERNAL_SERVER_ERROR);
       }
     };

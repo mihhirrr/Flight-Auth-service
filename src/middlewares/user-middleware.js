@@ -1,8 +1,9 @@
 const { StatusCodes } = require('http-status-codes');
 const zod = require('zod');
-const { Error } = require('../utils/common-utils')
 
-// Zod schema for input validation
+const { Error } = require('../utils/common-utils');
+
+// Zod schema
 const userInputSchema = zod.object({
   email: zod
     .string()
@@ -20,10 +21,10 @@ const userInputSchema = zod.object({
     }),
 });
 
-const userAuthMiddleware = async (req, res, next) => {
+// Middleware for user authentication validation
+const Auth = async (req, res, next) => {
   const { email, password, DoB } = req.body;
 
-  // Basic field presence check
   if (!email || !password) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       ...Error,
@@ -31,8 +32,9 @@ const userAuthMiddleware = async (req, res, next) => {
     });
   }
 
-  // Input validation
+  // Validate input using Zod schema
   const validationResult = userInputSchema.safeParse({ email, password, DoB });
+
   if (!validationResult.success) {
     const formattedErrors = validationResult.error.errors.map((err) => ({
       field: err.path[0],
@@ -42,11 +44,13 @@ const userAuthMiddleware = async (req, res, next) => {
     return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
       ...Error,
       message: "Unable to create user!",
-      error: formattedErrors
+      error: formattedErrors,
     });
-}
+  }
 
   next();
 };
 
-module.exports = userAuthMiddleware;
+module.exports = {
+  Auth
+}

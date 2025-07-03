@@ -2,13 +2,14 @@ const { UserService } = require("../services");
 const { StatusCodes } = require("http-status-codes");
 const { Error, Success } = require("../utils/common-utils");
 
-async function userSignup(req, res, next) {
-      const { email, password } = req.body;
+async function Signup(req, res, next) {
+      const { email, password, DoB } = req.body;
     
       try {
         const createdUser = await UserService.userSignup({
             email,
             password,
+            DoB
         });
 
         const SuccessResponse = { 
@@ -29,12 +30,11 @@ async function userSignup(req, res, next) {
             }
       }
 
-        return res.status(error.StatusCode).json(ErrorResponse);
+        return res.status(error.StatusCode || 500 ).json(ErrorResponse);
       }
 }
 
 
-
 module.exports = {
-      userSignup
+      Signup
 }
