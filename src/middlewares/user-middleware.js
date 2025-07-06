@@ -1,5 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const zod = require('zod');
+const jwt = require('jsonwebtoken')
+const { ServerConfig } = require('../config')
 
 const { Error } = require('../utils/common-utils');
 
@@ -51,6 +53,39 @@ const Auth = async (req, res, next) => {
   next();
 };
 
+const isAuthenticated = async(req, res, next) => {
+    const token = req.headers['token']
+
+    if(!token){
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        ...Error,
+        message: "Please login to access this resourse!",
+        error: formattedErrors,
+      });
+    }
+
+    try {
+      const decoded = await jwt.verify(token, ServerConfig.JWT_SECRET);
+      if(!decoded){
+        return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+          ...Error,
+          message: "You are not allowed to access this resourse!",
+          error: error.name,
+        });
+      }
+    } catch (error) {
+      console.log(error)
+      return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+        ...Error,
+        message: "Session expired!",
+        error: error.name,
+      });
+    }
+    next()
+}
+
+
 module.exports = {
-  Auth
+  Auth,
+  isAuthenticated
 }

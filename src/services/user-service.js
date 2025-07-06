@@ -43,7 +43,7 @@ const userLogin = async(data) => {
           StatusCodes.BAD_REQUEST);
       }
 
-      const token = jwt.sign({ email : user.email }, ServerConfig.JWT_SECRET)
+      const token = jwt.sign({ email : user.email }, ServerConfig.JWT_SECRET, {  expiresIn: ServerConfig.JWT_EXPIRY })
       return token
 
   } catch (error) {
