@@ -3,7 +3,7 @@ const { ServerConfig } = require('../config')
 const AppError = require('../utils/Error-handler/AppError')
 const { StatusCodes } = require('http-status-codes')
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
+const comparePasswords = require('../utils/common-utils/compare-password')
 
 const userRepo = new UserRepository();
 
@@ -36,7 +36,7 @@ const userLogin = async(data) => {
           StatusCodes.NOT_FOUND);
       }
 
-      const isPasswordCorrect = await bcrypt.compare(data.password, user.password);
+      const isPasswordCorrect = await comparePasswords(data.password, user.password)
 
       if(!isPasswordCorrect){
         throw new AppError("Authentication Failed! Incorrect password.", 

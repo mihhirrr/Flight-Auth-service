@@ -1,6 +1,7 @@
 const { UserService } = require("../services");
 const { StatusCodes } = require("http-status-codes");
 const { Error, Success } = require("../utils/common-utils");
+const AppError = require('../utils/Error-handler/AppError')
 
 async function signup(req, res, next) {
       const { email, password, DoB } = req.body;
@@ -38,6 +39,10 @@ async function login(req, res, next){
       const { email, password } = req.body;
 
       try {
+            if(!(email && password)){
+                  throw new AppError('Both email and password required.', 
+                        StatusCodes.BAD_REQUEST);
+            }
             const response = await UserService.userLogin({ email, password })
             
             const SuccessResponse = { 
