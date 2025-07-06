@@ -21,14 +21,14 @@ const userInputSchema = zod.object({
     }),
 });
 
-// Middleware for user authentication validation
+// User authentication validation
 const Auth = async (req, res, next) => {
   const { email, password, DoB } = req.body;
 
   if (!email || !password) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       ...Error,
-      error: "Email and Password are required",
+      error: "Email and Password both are required",
     });
   }
 

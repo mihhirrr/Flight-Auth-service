@@ -36,6 +36,26 @@ class CrudFunctions {
     }
   }
 
+  async findOne(findByQuery) {
+    console.log(findByQuery)
+    try {
+      const response = await this.model.findOne({
+        where:{
+          email: findByQuery
+        }
+      });
+      if (!response) {
+        throw new AppError(
+          `Resource not found for ${findByQuery}`,
+          StatusCodes.NOT_FOUND
+        );
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findAll(options = {}) {
     try {
       const response = await this.model.findAll(options);

@@ -5,6 +5,9 @@ const { UserController } = require('../controllers')
 const Router = express.Router()
 
 Router.post('/signup', 
-      UserMiddleware.Auth, UserController.Signup)
+      UserMiddleware.Auth, UserController.signup)
+
+Router.post('/login', 
+            UserMiddleware.Auth, UserController.login)
 
 module.exports = Router
