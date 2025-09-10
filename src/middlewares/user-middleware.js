@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const { ServerConfig } = require('../config')
 
 const { Error } = require('../utils/common-utils');
+const AppError = require('../utils/Error-handler/AppError');
 
 // Zod schema
 const userInputSchema = zod.object({
@@ -60,30 +61,26 @@ const isAuthenticated = async(req, res, next) => {
       return res.status(StatusCodes.BAD_REQUEST).json({
         ...Error,
         message: "Please login to access this resourse!",
-        error: formattedErrors,
+        error: {},
       });
     }
 
     try {
       const decoded = await jwt.verify(token, ServerConfig.JWT_SECRET);
-      if(!decoded){
-        return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-          ...Error,
-          message: "You are not allowed to access this resourse!",
-          error: error.name,
-        });
+      if(decoded){
+          next();
       }
     } catch (error) {
-      console.log(error)
+      if(error.name === 'TokenExpiredError'){
+        error.message = "Session expired!"
+      }
       return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
         ...Error,
-        message: "Session expired!",
+        message: error.message,
         error: error.name,
       });
     }
-    next()
 }
-
 
 module.exports = {
   Auth,

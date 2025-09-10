@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx nodemon src/index.js"
   },
-  "author": "Sanket",
+  "author": "Mihir Dongare",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
