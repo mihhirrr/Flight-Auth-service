@@ -39,10 +39,6 @@ async function login(req, res, next){
       const { email, password } = req.body;
 
       try {
-            if(!(email && password)){
-                  throw new AppError('Both email and password required.', 
-                        StatusCodes.BAD_REQUEST);
-            }
             const response = await UserService.userLogin({ email, password })
             
             const SuccessResponse = { 

@@ -29,18 +29,19 @@ const userSignup = async (data) => {
 
 const userLogin = async(data) => {
   try {
-      const email = data.email
-      const user = await userRepo.findOne(email)
+      const { email } = data
+      const user = await userRepo.findOne(email)  //finding the user by email
+
       if(!user){
         throw new AppError('User not found with specified email address.', 
           StatusCodes.NOT_FOUND);
       }
 
-      const isPasswordCorrect = await comparePasswords(data.password, user.password)
+      const isPasswordCorrect = await comparePasswords(data.password, user.password)   //comparing the passwords from the request body and the stored user password
 
       if(!isPasswordCorrect){
         throw new AppError("Authentication Failed! Incorrect password.", 
-          StatusCodes.BAD_REQUEST);
+          StatusCodes.UNAUTHORIZED);
       }
 
       const token = jwt.sign({ email : user.email }, ServerConfig.JWT_SECRET, {  expiresIn: ServerConfig.JWT_EXPIRY })
