@@ -1,7 +1,8 @@
 const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware')
 const { limiter } = require('./utils/rate-limiter/rate-limit');
 const { ServerConfig } = require('./config');
-const { UserRoutes } = require('./routes')
+const { Routes } = require('./routes')
 
 const app = express();
 
@@ -11,8 +12,12 @@ app.use(limiter)            //Implementing the rate limiting here for now. Later
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/users', UserRoutes);
+app.use('/api', Routes );
 
-app.listen(ServerConfig.PORT, () => {
+//forwarding requests to respective microservice
+app.use('/flightservice', createProxyMiddleware({ target: ServerConfig.FLIGHT_SERVICE, changeOrigin:true }) );
+app.use('/bookingservice', createProxyMiddleware({ target:'https://localhost:5500/', changeOrigin:true }) );
+
+app.listen(ServerConfig.PORT, '0.0.0.0', () => {
     console.log(`Successfully started the server on PORT : ${ServerConfig.PORT}`);
 });

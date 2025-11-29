@@ -1,11 +1,13 @@
 # Flight Authentication Service
 
-A microservice for user authentication and management in the Flight Booking Application ecosystem. This service handles user registration, login, and JWT-based authentication.
+A microservice for user authentication and management in the Flight Booking Application ecosystem. This service acts as both an authentication service and an API gateway, handling user registration, login, JWT-based authentication, and proxying requests to other microservices.
 
 ## Features
 
 - **User Registration** - Secure user signup with password hashing
 - **User Authentication** - JWT-based login system
+- **API Gateway** - Request proxying to Flight Service and Booking Service
+- **Rate Limiting** - Protection against abuse (100 requests per 5 minutes per IP)
 - **Input Validation** - Zod schema validation for all inputs
 - **Password Security** - Bcrypt hashing with configurable salt rounds
 - **Error Handling** - Comprehensive error handling with proper HTTP status codes
@@ -31,8 +33,10 @@ src/
 
 - **Runtime**: Node.js
 - **Framework**: Express.js
-- **Database & ORM**: MySQL , Sequelize
+- **Database & ORM**: MySQL, Sequelize
 - **Authentication & Validation**: JWT + Bcrypt, Zod
+- **API Gateway**: http-proxy-middleware
+- **Rate Limiting**: express-rate-limit
 - **Logging**: Winston
 - **HTTP Status**: http-status-codes
 
@@ -76,6 +80,9 @@ JWT_EXPIRY=24h
 
 # Security Configuration
 SALT_ROUNDS=10
+
+# Microservice URLs
+FLIGHT_SERVICE=http://localhost:4000
 ```
 
 ### 4. Database Setup
@@ -97,6 +104,24 @@ npm start
 ```
 
 The service will be available at `http://localhost:3000`
+
+## API Gateway Routes
+
+This service also acts as an API gateway, forwarding requests to other microservices:
+
+- **Flight Service**: `/flightservice/*` → Proxies to `FLIGHT_SERVICE` environment variable
+- **Booking Service**: `/bookingservice/*` → Proxies to `https://localhost:5500/`
+
+All requests to these routes are automatically forwarded to their respective services with origin change enabled.
+
+## Rate Limiting
+
+The service implements rate limiting to protect against abuse:
+- **Limit**: 100 requests per IP address
+- **Window**: 5 minutes
+- **Scope**: Applied to all incoming requests
+
+When the rate limit is exceeded, the service will return a `429 Too Many Requests` status code.
 
 ## API Documentation
 
@@ -226,6 +251,7 @@ npm run test:coverage
 | JWT_SECRET    | JWT signing secret            | -       | Yes      |
 | JWT_EXPIRY   | JWT token expiry time        | 24h     | Yes      |
 | SALT_ROUNDS   | Bcrypt salt rounds           | 10      | Yes      |
+| FLIGHT_SERVICE | Flight service URL for proxying | - | Yes      |
 
 ## Deployment
 
