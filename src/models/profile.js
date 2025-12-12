@@ -14,7 +14,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.belongsToMany(models.user, {
+        through: 'user_profiles',
+        foreignKey: 'ProfileId',
+      });
     }
   }
   Profile.init({
@@ -22,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
     values: [ ADMIN, CUSTOMER ], 
     allowNull: false,
     default: CUSTOMER
-  }, {
+  }, 
+  {
     sequelize,
     modelName: 'Profile',
   });
