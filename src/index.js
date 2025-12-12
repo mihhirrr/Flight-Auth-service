@@ -14,10 +14,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', Routes );
 
-//forwarding requests to respective microservice
+// forwarding requests to respective microservice
 app.use('/flightservice', createProxyMiddleware({ 
     target: ServerConfig.FLIGHT_SERVICE , 
-    changeOrigin:true ,  
+    changeOrigin:true,  
     pathRewrite: { '^/flightservice': '' }
 }) );
 
@@ -26,6 +26,7 @@ app.use('/bookingservice', createProxyMiddleware({
     changeOrigin:true, 
     pathRewrite: { '^/bookingservice': '' }
 }) );
+
 
 app.listen(ServerConfig.PORT, '0.0.0.0', () => {
     console.log(`Successfully started the server on PORT : ${ServerConfig.PORT}`);

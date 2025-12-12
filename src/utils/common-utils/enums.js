@@ -6,7 +6,13 @@ const BookingStatus = {
     FAILED : 'Failed'
 }
 
+const User_Profile = {
+    ADMIN: 'admin',
+    CUSTOMER: 'customer'
+}
+
 
 module.exports = {
-    BookingStatus
+    BookingStatus,
+    User_Profile
 }
