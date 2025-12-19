@@ -3,7 +3,7 @@
 
 
 const { Enums } = require('../utils/common-utils')
-const { ADMIN, CUSTOMER } = Enums.User_Profile;
+const { ADMIN, STAFF, CUSTOMER } = Enums.User_Profile;
 
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -16,7 +16,7 @@ module.exports = {
       },
       Name: {
         type: Sequelize.ENUM,
-        values: [ ADMIN, CUSTOMER ], 
+        values: [ ADMIN, STAFF, CUSTOMER ], 
         allowNull: false,
         default: CUSTOMER
       },

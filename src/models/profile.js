@@ -4,7 +4,7 @@ const {
 } = require('sequelize');
 
 const { Enums } = require('../utils/common-utils')
-const { ADMIN, CUSTOMER } = Enums.User_Profile;
+const { ADMIN, STAFF, CUSTOMER } = Enums.User_Profile;
 
 module.exports = (sequelize, DataTypes) => {
   class Profile extends Model {
@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   Profile.init({
     Name: {
       type: DataTypes.ENUM,
-      values: [ ADMIN, CUSTOMER ],
+      values: [ ADMIN, STAFF, CUSTOMER ],
       allowNull: false,
       default: CUSTOMER
     }, 

@@ -8,7 +8,8 @@ const BookingStatus = {
 
 const User_Profile = {
     ADMIN: 'admin',
-    CUSTOMER: 'customer'
+    CUSTOMER: 'customer',
+    STAFF: 'staff'
 }
 
 
