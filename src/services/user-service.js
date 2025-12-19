@@ -1,16 +1,21 @@
-const { UserRepository } = require('../repositories')
+const { UserRepository, ProfileRepository } = require('../repositories')
 const { ServerConfig } = require('../config')
 const AppError = require('../utils/Error-handler/AppError')
 const { StatusCodes } = require('http-status-codes')
 const jwt = require('jsonwebtoken')
+const { Enums } = require('../utils/common-utils')
 const comparePasswords = require('../utils/common-utils/compare-password')
 
 const userRepo = new UserRepository();
+const profileRepo = new ProfileRepository()
 
 const userSignup = async (data) => {
       try {
            const createdUser = await userRepo.create(data)
-           return createdUser
+           const profile = await profileRepo.findOne(Enums.User_Profile.CUSTOMER) //Getting CUSTOMER profile by querying to Profile
+           await createdUser.addProfile(profile)    // assigning the CUSTOMER profile to new user
+
+           return true;
       } catch (error) {
 
         if (error.name === "SequelizeValidationError") {
@@ -21,7 +26,7 @@ const userSignup = async (data) => {
           throw new AppError('Email already exists. Please try with different email.', 
             StatusCodes.BAD_REQUEST);
         }
-
+        console.log(error)
         throw new AppError("An error occured during Sign up! Please retry.", 
             StatusCodes.INTERNAL_SERVER_ERROR);
       }
