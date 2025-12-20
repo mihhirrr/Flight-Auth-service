@@ -49,7 +49,7 @@ const userLogin = async(data) => {
           StatusCodes.UNAUTHORIZED);
       }
 
-      const token = jwt.sign({ email : user.email }, ServerConfig.JWT_SECRET, {  expiresIn: ServerConfig.JWT_EXPIRY })
+      const token = jwt.sign({ email : user.email, id: user.id }, ServerConfig.JWT_SECRET, {  expiresIn: ServerConfig.JWT_EXPIRY })
       return token
 
   } catch (error) {
@@ -57,7 +57,30 @@ const userLogin = async(data) => {
   }
 }
 
+const addstaff = async (data) => {
+  try {
+       const createdStaff = await userRepo.create(data)
+       const profile = await profileRepo.findOne(Enums.User_Profile.STAFF) //Getting STAFF profile by querying to Profile
+       await createdStaff.addProfile(profile)    // assigning the STAFF profile to new user
+
+       return true;
+  } catch (error) {
+
+    if (error.name === "SequelizeValidationError") {
+      throw new AppError(error.message, StatusCodes.BAD_REQUEST);
+    }
+
+    if(error.name === 'SequelizeUniqueConstraintError') {
+      throw new AppError('Email already exists. Please try with different email.', 
+        StatusCodes.BAD_REQUEST);
+    }
+    throw new AppError("An error occured during Sign up! Please retry.", 
+        StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+};
+
 module.exports = {
       userSignup,
-      userLogin
+      userLogin,
+      addstaff
 }

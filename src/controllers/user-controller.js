@@ -1,7 +1,8 @@
 const { UserService } = require("../services");
 const { StatusCodes } = require("http-status-codes");
 const { Error, Success } = require("../utils/common-utils");
-const AppError = require('../utils/Error-handler/AppError')
+const AppError = require('../utils/Error-handler/AppError');
+const { message } = require("../utils/common-utils/success");
 
 async function signup(req, res, next) {
       const { email, password, DoB } = req.body;
@@ -64,7 +65,37 @@ async function login(req, res, next){
       }
 }
 
+async function addstaff(req, res, next) {
+      const { email, password } = req.body;
+      
+      try {
+            await UserService.addstaff({
+                  email, password
+              });
+            const SuccessResponse = { 
+                  ...Success,
+                  message: "Staff account created successfully",
+                  data: email
+            }
+
+            return res.status(StatusCodes.CREATED).json(SuccessResponse);
+
+      } catch (error) {
+            const ErrorResponse = {
+                  ...Error,
+                  message:'Unable to add new staff!',
+                  error:{
+                        message: error.message,
+                        StatusCode: error.StatusCode
+                  }
+            }
+            res.status(error.StatusCode || StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse)
+      }
+     
+}
+
 module.exports = {
       signup,
-      login
+      login,
+      addstaff
 }
