@@ -1,4 +1,5 @@
 const { UserRepository, ProfileRepository } = require('../repositories')
+const { Profile } = require('../models')
 const { ServerConfig } = require('../config')
 const AppError = require('../utils/Error-handler/AppError')
 const { StatusCodes } = require('http-status-codes')
@@ -35,21 +36,27 @@ const userSignup = async (data) => {
 const userLogin = async(data) => {
   try {
       const { email } = data
-      const user = await userRepo.findOne(email)  //finding the user by email
+      const includeProfilePayload = [     // to get the profile of the user
+        {
+          model: Profile,
+          through: { attributes: [] } // hides junction table
+        }
+      ]
 
+      const user = await userRepo.findOne(email, includeProfilePayload)  //finding the user by email
       if(!user){
         throw new AppError('User not found with specified email address.', 
           StatusCodes.NOT_FOUND);
       }
 
-      const isPasswordCorrect = await comparePasswords(data.password, user.password)   //comparing the passwords from the request body and the stored user password
+      const isPasswordCorrect = await comparePasswords(data.password, user.password)   //helper to compare passwords
 
       if(!isPasswordCorrect){
         throw new AppError("Authentication Failed! Incorrect password.", 
           StatusCodes.UNAUTHORIZED);
       }
 
-      const token = jwt.sign({ email : user.email, id: user.id }, ServerConfig.JWT_SECRET, {  expiresIn: ServerConfig.JWT_EXPIRY })
+      const token = jwt.sign({ email : user.email, role: user.Profiles[0].dataValues.Name }, ServerConfig.JWT_SECRET, {  expiresIn: ServerConfig.JWT_EXPIRY })
       return token
 
   } catch (error) {

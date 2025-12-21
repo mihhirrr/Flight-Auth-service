@@ -1,3 +1,4 @@
+const { includes } = require("zod/v4");
 const AppError = require("../utils/Error-handler/AppError");
 const { StatusCodes } = require("http-status-codes");
 
@@ -36,13 +37,13 @@ class CrudFunctions {
     }
   }
 
-  async findOne(findByQuery) {
-    console.log(findByQuery)
+  async findOne(findByQuery, includeQuery) {
     try {
       const response = await this.model.findOne({
         where:{
           email: findByQuery
-        }
+        }, 
+        include: includeQuery
       });
       if (!response) {
         throw new AppError(
