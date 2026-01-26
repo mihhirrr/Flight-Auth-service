@@ -22,7 +22,7 @@ const Auth = async (req, res, next) => {
 
 // protected route middleware for checking if the user authorisation
 const isAuthenticated = async(req, res, next) => {
-    const token = req.headers['token']
+    const token = req.headers.authorization?.split(' ')[1]
 
     if(!token){
       return res.status(StatusCodes.BAD_REQUEST).json({

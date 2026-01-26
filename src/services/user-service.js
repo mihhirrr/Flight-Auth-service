@@ -56,7 +56,7 @@ const userLogin = async(data) => {
           StatusCodes.UNAUTHORIZED);
       }
 
-      const token = jwt.sign({ email : user.email, role: user.Profiles[0].dataValues.Name }, ServerConfig.JWT_SECRET, {  expiresIn: ServerConfig.JWT_EXPIRY })
+      const token = jwt.sign({ id: user.id, email: user.email, role: user.Profiles[0].dataValues.Name }, ServerConfig.JWT_SECRET, {  expiresIn: ServerConfig.JWT_EXPIRY })
       return token
 
   } catch (error) {
