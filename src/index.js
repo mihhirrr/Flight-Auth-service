@@ -3,15 +3,13 @@ const { createProxyMiddleware } = require('http-proxy-middleware')
 const { limiter } = require('./utils/rate-limiter/rate-limit');
 const { ServerConfig } = require('./config');
 const { Routes } = require('./routes')
-const { attachUserToHeaders } = require('./middlewares/auth-gateway-middleware');
+const { isAuthenticated } = require('./middlewares/user-middleware');
 
 const app = express();
 
 // Apply the rate limiting middleware to all requests.
 app.use(limiter)            //Implementing the rate limiting here for now. 
 
-// Middleware to extract user info from JWT and add to request headers
-app.use(attachUserToHeaders);
 
 const createServiceProxy = (target, prefix) =>
   createProxyMiddleware({
@@ -20,8 +18,8 @@ const createServiceProxy = (target, prefix) =>
     pathRewrite: { [`^/${prefix}`]: '' },
   });
 
-app.use('/flightservice', createServiceProxy(ServerConfig.FLIGHT_SERVICE, 'flightservice'));
-app.use('/bookingservice', createServiceProxy(ServerConfig.BOOKING_SERVICE, 'bookingservice'));
+app.use('/flightservice', isAuthenticated, createServiceProxy(ServerConfig.FLIGHT_SERVICE, 'flightservice'));
+app.use('/bookingservice', isAuthenticated, createServiceProxy(ServerConfig.BOOKING_SERVICE, 'bookingservice'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
