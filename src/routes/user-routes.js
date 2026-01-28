@@ -11,7 +11,7 @@ Router.post(
 )
 
 Router.post(
-      '/staff/addnew', 
+      '/admin/members', 
       UserMiddleware.Auth, 
       UserMiddleware.isAdmin,
       UserController.addstaff

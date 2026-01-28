@@ -22,7 +22,7 @@ const Auth = async (req, res, next) => {
 
 // protected route middleware for checking if the user authorisation
 const isAuthenticated = async(req, res, next) => {
-    const token = req.headers['token']
+    const token = req.headers.authorization?.split(' ')[1]
 
     if(!token){
       return res.status(StatusCodes.BAD_REQUEST).json({
@@ -37,6 +37,10 @@ const isAuthenticated = async(req, res, next) => {
     try {
       const decoded = await jwt.verify(token, ServerConfig.JWT_SECRET);
       if(decoded){
+          req.headers['x-user-id'] = decoded.id;
+          req.headers['x-user-email'] = decoded.email;
+          req.headers['x-user-role'] = decoded.role;
+          console.log("Headers added to the request:", req.headers);
           next();
       }
     } catch (error) {
@@ -55,7 +59,7 @@ const isAuthenticated = async(req, res, next) => {
 }
 
 const isAdmin = async (req, res, next) => {
-    const token = req.headers['token']
+    const token = req.headers.authorization?.split(' ')[1]
 
     if(!token){                         //Reject is no token provided
       return res.status(StatusCodes.BAD_REQUEST).json({
@@ -87,7 +91,7 @@ const isAdmin = async (req, res, next) => {
 }
 
 const isStaff = async (req, res, next) => {
-  const token = req.headers['token']
+  const token = req.headers.authorization?.split(' ')[1]
 
   if(!token){                         //Reject is no token provided
     return res.status(StatusCodes.BAD_REQUEST).json({
