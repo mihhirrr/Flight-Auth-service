@@ -65,24 +65,16 @@ Create a `.env` file in the root directory:
 ```env
 # Server Configuration
 PORT=3000
-NODE_ENV=development
-
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=flight_auth_db
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
 
 # JWT Configuration
 JWT_SECRET=your_super_secret_jwt_key_here
 JWT_EXPIRY=24h
 
-# Security Configuration
 SALT_ROUNDS=10
 
 # Microservice URLs
 FLIGHT_SERVICE=http://localhost:4000
+BOOKING_SERVICE=https://localhost:5000
 ```
 
 ### 4. Database Setup
@@ -262,17 +254,6 @@ npm ci --only=production
 
 # Start production server
 npm start
-```
-
-### Docker (Optional)
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
 ```
 
 ## Development
