@@ -64,17 +64,17 @@ Create a `.env` file in the root directory:
 
 ```env
 # Server Configuration
-PORT=3000
+PORT=<Service_Port>
 
 # JWT Configuration
 JWT_SECRET=your_super_secret_jwt_key_here
-JWT_EXPIRY=24h
+JWT_EXPIRY=<Expiry_In_Hours>
 
-SALT_ROUNDS=10
+SALT_ROUNDS=<>
 
 # Microservice URLs
-FLIGHT_SERVICE=http://localhost:4000
-BOOKING_SERVICE=https://localhost:5000
+FLIGHT_SERVICE=http://localhost:<Service_Port>
+BOOKING_SERVICE=https://localhost:<Service_Port>
 ```
 
 ### 4. Database Setup
@@ -288,7 +288,7 @@ This project is licensed under the ISC License.
 
 **Mihir Dongare** - Developer
 
-## 🔗 Related Services
+##  Related Services
 
 This service is part of a larger Flight Booking Application ecosystem:
 - **Flight Search Service** - Flight availability and search
